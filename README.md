@@ -358,6 +358,7 @@ gmake[2]: *** [solver_lib/CMakeFiles/solver.dir/build.make:76: solver_lib/CMakeF
 gmake[1]: *** [CMakeFiles/Makefile2:222: solver_lib/CMakeFiles/solver.dir/all] Error 2
 gmake: *** [Makefile:91: all] Error 2
 ```
+
 "Это ошибка уже не в CMake, а в C++. Строка ```‘sqrtf’ is not a member of ‘std’``` говорит, что функция sqrtf не находится в ```std::``` и нет нужной подключенной библиотеки. Самым простым решением будет (и на мой взгляд правильным) исправить solver.cpp в котором и появляется эта ошибка.
 
 ## Исправленный solver.cpp
@@ -375,7 +376,42 @@ void solve(float a, float b, float c, float& x1, float& x2) {
     x2 = (-b + std::sqrt(d)) / (2 * a);
 }
 ```
+Затем выполняем пересборку, перед этим обязательно возврвщвемся в build с помощью ```cd build``` и выполняем пересборку ```cmake --build .``` для того, чтобы получить желаемое:
 
+```bash
+$ cmake --build .
+[ 20%] Built target formatter
+[ 40%] Built target formatter_ex
+[ 50%] Building CXX object solver_lib/CMakeFiles/solver.dir/solver.cpp.o
+[ 60%] Linking CXX static library libsolver.a
+[ 60%] Built target solver
+[ 70%] Building CXX object hello_world_application/CMakeFiles/hello_world.dir/hello_world.cpp.o
+[ 80%] Linking CXX executable hello_world
+[ 80%] Built target hello_world
+[ 90%] Building CXX object solver_application/CMakeFiles/solver_app.dir/equation.cpp.o
+[100%] Linking CXX executable solver_app
+[100%] Built target solver_app
+```
+
+Теперь лишь осталось убедиться в том, что мы сделали все правильно. Для этого запустим наши файлы находясю в build  .
+
+```bash
+$ ./hello_world_application/hello_world
+-------------------------
+hello, world!
+-------------------------
+$ ./solver_application/solver_app
+1 2 1
+-------------------------
+x1 = -1.000000
+-------------------------
+-------------------------
+x2 = -1.000000
+-------------------------
+
+```
+
+На этом всё! Спасибо за внимание!
 
 
 
